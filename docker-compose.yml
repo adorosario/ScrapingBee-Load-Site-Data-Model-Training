@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+    stdin_open: true
+    tty: true
+    command: /bin/bash
