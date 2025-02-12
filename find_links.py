@@ -9,15 +9,24 @@ load_dotenv()
 
 # Constants for the attributes to be extracted from the sitemap
 ATTRS = ["loc", "lastmod", "priority"]
-SITEMAP_URL = os.getenv('SITEMAP_URL', 'https://docs.customgpt.ai/sitemap.xml')
+
+# Get sitemap URL and strip quotes if present
+sitemap_url = os.getenv('SITEMAP_URL')
+if sitemap_url:
+    # Remove any surrounding quotes that might have been added in .env
+    sitemap_url = sitemap_url.strip('"\'')
+else:
+    sitemap_url = 'https://docs.customgpt.ai/sitemap.xml'
 
 def parse_sitemap(url, csv_filename="urls.csv"):
     """Parse the sitemap at the given URL and append the data to a CSV file."""
     if not url:
         return False
 
+    print(f"Fetching sitemap from: {url}")
     response = requests.get(url)
     if response.status_code != 200:
+        print(f"Failed to fetch sitemap. Status code: {response.status_code}")
         return False
 
     soup = Soup(response.content, "xml")
@@ -47,5 +56,5 @@ def parse_sitemap(url, csv_filename="urls.csv"):
         writer.writerows(rows)
 
 if __name__ == "__main__":
-    print(f"Starting sitemap parse from: {SITEMAP_URL}")
-    parse_sitemap(SITEMAP_URL)
+    print(f"Starting sitemap parse from: {sitemap_url}")
+    parse_sitemap(sitemap_url)
